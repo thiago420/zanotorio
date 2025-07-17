@@ -8,7 +8,10 @@ import {
   calcularNpi,
 } from "../../util/utils";
 import Checkbox from "../../components/Checkbox";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/components/animate-ui/radix/toggle-group";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -19,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 const formulaSchema = z.object({
   np: z.coerce.number().min(1).max(7),
@@ -46,12 +50,13 @@ const Calculadora = () => {
     mode: "all",
     resolver: zodResolver(formulaSchema),
     defaultValues: {
-      np: ''
-    }
+      np: "",
+    },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const numeroProposicoes = Number(watch('np')) || 1;
+  const [clicar, setClicar] = useState<string[]>([]);
+
+  const numeroProposicoes = Number(watch("np")) || 1;
 
   const retornarDados = ({ np, resposta, gabarito, pv }: FormulaSchema) => {
     console.log(np, gabarito, resposta, pv);
@@ -65,19 +70,22 @@ const Calculadora = () => {
   return (
     <>
       <div className="flex h-screen w-screen items-center justify-center">
-        <form className="flex flex-col items-center justify-center" onSubmit={handleSubmit(retornarDados)}>
-          <ToggleGroup variant="outline" type="multiple">
-            <ToggleGroupItem value="bold" aria-label="Toggle bold">
-              A
+        <form
+          className="flex flex-col justify-center gap-3"
+          onSubmit={handleSubmit(retornarDados)}
+        >
+          <ToggleGroup
+            type="multiple"
+            value={clicar}
+            onValueChange={(value) => {
+              if (value) setClicar(value);
+            }}
+          >
+            <ToggleGroupItem value="clicar-resposta">
+              Clicar Resposta
             </ToggleGroupItem>
-            <ToggleGroupItem value="italic" aria-label="Toggle italic">
-              B
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="strikethrough"
-              aria-label="Toggle strikethrough"
-            >
-              C
+            <ToggleGroupItem value="clicar-gabarito">
+              Clicar Gabarito
             </ToggleGroupItem>
           </ToggleGroup>
 
@@ -86,7 +94,10 @@ const Calculadora = () => {
             {...register("np")}
             control={control}
             render={({ field }) => (
-              <Select value={String(field.value)} onValueChange={field.onChange}>
+              <Select
+                value={String(field.value)}
+                onValueChange={field.onChange}
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Selecione..." />
                 </SelectTrigger>
@@ -105,63 +116,79 @@ const Calculadora = () => {
             )}
           />
 
-          {/* <label htmlFor="resposta">Resposta</label> */}
-          <Input
-            label="Resposta"
-            style={{
-              width: '64px',
-              height: '48px',
-              fontSize: '1.8rem',
-              textAlign: 'center',
-            }}
-            type="number"
-            id="resposta"
-            error={errors.resposta?.message}
-            {...register("resposta")}
-          />
-          {/* <Input
-            label="Resposta"
-            style={{ width: "min" }}
-            type="number"
-            id="resposta"
-            error={errors.resposta?.message}
-            {...register("resposta")}
-          /> */}
-
-          {[...Array(numeroProposicoes)].map((_, i) => (
-            <div key={`resposta${i}`}>
-              <Checkbox id={`resposta${i}`} name={`resposta${i}`} label={String(1 << i)} value={i} />
-            </div>
-          ))}
+          {clicar.includes("clicar-resposta") ? (
+            <>
+              <label>Resposta</label>
+              <div className="flex flex-row gap-2">
+                {[...Array(numeroProposicoes)].map((_, i) => (
+                  <div key={`resposta${i}`}>
+                    <Checkbox
+                      id={`resposta${i}`}
+                      name={`resposta${i}`}
+                      label={String(1 << i)}
+                      value={i}
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <Input
+              label="Resposta"
+              style={{
+                width: "64px",
+                height: "48px",
+                fontSize: "1.8rem",
+                textAlign: "center",
+              }}
+              type="number"
+              id="resposta"
+              error={errors.resposta?.message}
+              {...register("resposta")}
+            />
+          )}
 
           {/* <label htmlFor="gabarito">Gabarito</label> */}
-          <Input
-            label="Gabarito"
-            style={{
-              width: '64px',
-              height: '48px',
-              fontSize: '1.8rem',
-              textAlign: 'center',
-            }}
-            type="number"
-            id="gabarito"
-            {...register("gabarito")}
-          />
 
-          {[...Array(numeroProposicoes)].map((_, i) => (
-            <div key={`gabarito${i}`}>
-              <Checkbox id={`gabarito${i}`} name={`gabarito${i}`} label={String(1 << i)} value={i} />
-            </div>
-          ))}
+          {clicar.includes("clicar-gabarito") ? (
+            <>
+              <label>Gabarito</label>
+              <div className="flex flex-row gap-2">
+                {[...Array(numeroProposicoes)].map((_, i) => (
+                  <div key={`gabarito${i}`}>
+                    <Checkbox
+                      id={`gabarito${i}`}
+                      name={`gabarito${i}`}
+                      label={String(1 << i)}
+                      value={i}
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <Input
+              label="Gabarito"
+              style={{
+                width: "64px",
+                height: "48px",
+                fontSize: "1.8rem",
+                textAlign: "center",
+              }}
+              type="number"
+              id="gabarito"
+              {...register("gabarito")}
+            />
+          )}
 
           {/* <label htmlFor="pv">Valor da Questão</label> */}
           <Input
             label="Valor da Questão"
             style={{
-              width: '64px',
-              height: '48px',
-              fontSize: '1.8rem',
-              textAlign: 'center',
+              width: "64px",
+              height: "48px",
+              fontSize: "1.8rem",
+              textAlign: "center",
             }}
             type="number"
             id="pv"

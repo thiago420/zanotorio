@@ -4,6 +4,7 @@ import Calculadora from "../pages/Calculadora";
 import Sobre from "../pages/Sobre";
 import Navbar from "../components/Navbar";
 import Provas from "@/pages/Provas";
+import DraggableBox from "@/pages/teste";
 
 const routes = () => (
   <Routes>
@@ -12,6 +13,8 @@ const routes = () => (
       <Route path="calculadora" element={<Calculadora />} />
       <Route path="sobre" element={<Sobre />} />
       <Route path="provas" element={<Provas />} />
+      <Route path="teste" element={<DraggableBox />} />
+      <Route path="*" element={<span>404</span>} />
     </Route>
   </Routes>
 );
