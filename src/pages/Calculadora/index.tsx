@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   bitsAtivos,
   calcularSomatorio,
@@ -8,21 +11,33 @@ import {
 import Input from "../../components/Input";
 import Checkbox from "../../components/Checkbox";
 
+const formulaSchema = z.object({
+  np: z.coerce.number().min(1).max(7),
+  resposta: z.coerce.number("Você precisa inserir um número").min(1, "Você precisa colocar um número\nmaior ou igual que 1").max(99, "Você precisa colocar um número menor ou igual que 99"),
+  gabarito: z.coerce.number("Você precisa inserir um número").min(1, "Você precisa colocar um número maior ou igual que 1").max(99, "Você precisa colocar um número menor ou igual que 99"),
+  pv: z.coerce.number().gt(0),
+});
+
+type FormulaSchema = z.infer<typeof formulaSchema>;
+
 const Calculadora = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: 'all',
+    resolver: zodResolver(formulaSchema),
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [numeroProposicoes, setNumeroProposicoes] = useState(1);
 
-  const retornarDados = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    const resposta = Number(formData.get("resposta"));
-    const gabarito = Number(formData.get("gabarito"));
-
-    const np = Number(formData.get("np"));
+  const retornarDados = ({ np, resposta, gabarito, pv }: FormulaSchema) => {
+    console.log(np, gabarito, resposta, pv)
     const ntpc = bitsAtivos(gabarito).length;
     const npc = calcularNpc(bitsAtivos(gabarito), bitsAtivos(resposta));
     const npi = calcularNpi(bitsAtivos(gabarito), bitsAtivos(resposta));
-    const pv = Number(formData.get("pv")) || 1;
 
     console.log(calcularSomatorio(np, ntpc, npc, npi, pv));
   };
@@ -30,13 +45,11 @@ const Calculadora = () => {
   return (
     <>
       <div className="flex h-screen w-screen items-center justify-center">
-        <form className="flex flex-col" onSubmit={retornarDados}>
+        <form className="flex flex-col" onSubmit={handleSubmit(retornarDados)}>
           <label htmlFor="np">Número de Proposições</label>
           <select
-            name="np"
             id="np"
-            value={numeroProposicoes}
-            onChange={(e) => setNumeroProposicoes(Number(e.target.value))}
+            {...register('np')}
           >
             <option value={1}>1</option>
             <option value={2}>2</option>
@@ -50,7 +63,7 @@ const Calculadora = () => {
           <Checkbox />
 
           {/* <label htmlFor="resposta">Resposta</label> */}
-          <Input label="Resposta" type="number" id="resposta" name="resposta" />
+          <Input label="Resposta" style={{ width: 'min' }} type="number" id="resposta" error={errors.resposta?.message} {...register('resposta')} />
 
           {[...Array(numeroProposicoes)].map((_, i) => (
             <div key={`resposta${i}`} className="flex gap-2">
@@ -60,7 +73,7 @@ const Calculadora = () => {
           ))}
 
           {/* <label htmlFor="gabarito">Gabarito</label> */}
-          <Input label="Gabarito" type="number" id="gabarito" name="gabarito" required />
+          <Input label="Gabarito" type="number" id="gabarito" {...register('gabarito')} />
 
           {[...Array(numeroProposicoes)].map((_, i) => (
             <div key={`gabarito${i}`} className="flex gap-2">
@@ -70,7 +83,7 @@ const Calculadora = () => {
           ))}
 
           {/* <label htmlFor="pv">Valor da Questão</label> */}
-          <Input label="Valor da Questão" type="number" id="gabarito" name="pv" />
+          <Input label="Valor da Questão" type="number" id="pv" {...register('pv')} />
 
           <button type="submit">testar</button>
         </form>

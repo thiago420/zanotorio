@@ -1,6 +1,7 @@
 import { BrowserRouter } from "react-router";
 import Routes from './routes';
 import GlobalStyles from "./styles/GlobalStyles";
+import '@hellouxpavel/cssanimation';
 import './styles/style.css';
 
 function App() {
