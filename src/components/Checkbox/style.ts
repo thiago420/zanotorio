@@ -1,23 +1,23 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  .checkbox-wrapper-46 input[type="checkbox"] {
+  .checkbox-wrapper input[type="checkbox"] {
     display: none;
     visibility: hidden;
   }
 
-  .checkbox-wrapper-46 .cbx {
+  .checkbox-wrapper label {
     margin: auto;
     -webkit-user-select: none;
     user-select: none;
     cursor: pointer;
   }
-  .checkbox-wrapper-46 .cbx span {
+  .checkbox-wrapper label span {
     display: inline-block;
     vertical-align: middle;
     transform: translate3d(0, 0, 0);
   }
-  .checkbox-wrapper-46 .cbx span:first-child {
+  .checkbox-wrapper label span:first-child {
     position: relative;
     width: 18px;
     height: 18px;
@@ -27,7 +27,7 @@ export const Container = styled.div`
     border: 1px solid #9098a9;
     transition: all 0.2s ease;
   }
-  .checkbox-wrapper-46 .cbx span:first-child svg {
+  .checkbox-wrapper label span:first-child svg {
     position: absolute;
     top: 3px;
     left: 2px;
@@ -42,32 +42,32 @@ export const Container = styled.div`
     transition-delay: 0.1s;
     transform: translate3d(0, 0, 0);
   }
-  .checkbox-wrapper-46 .cbx span:first-child:before {
+  .checkbox-wrapper label span:first-child:before {
     content: "";
     width: 100%;
     height: 100%;
-    background: #506eec;
+    background: var(--color-ring);
     display: block;
     transform: scale(0);
     opacity: 1;
     border-radius: 50%;
   }
-  .checkbox-wrapper-46 .cbx span:last-child {
+  .checkbox-wrapper label span:last-child {
     padding-left: 8px;
   }
-  .checkbox-wrapper-46 .cbx:hover span:first-child {
-    border-color: #506eec;
+  .checkbox-wrapper label:hover span:first-child {
+    border-color: var(--color-ring);
   }
 
-  .checkbox-wrapper-46 .inp-cbx:checked + .cbx span:first-child {
-    background: #506eec;
-    border-color: #506eec;
+  .checkbox-wrapper input:checked + label span:first-child {
+    background: var(--color-ring);
+    border-color: var(--color-ring);
     animation: wave-46 0.4s ease;
   }
-  .checkbox-wrapper-46 .inp-cbx:checked + .cbx span:first-child svg {
+  .checkbox-wrapper input:checked + label span:first-child svg {
     stroke-dashoffset: 0;
   }
-  .checkbox-wrapper-46 .inp-cbx:checked + .cbx span:first-child:before {
+  .checkbox-wrapper input:checked + label span:first-child:before {
     transform: scale(3.5);
     opacity: 0;
     transition: all 0.6s ease;
@@ -87,8 +87,8 @@ export const CheckboxWrapper = styled.div`
 
 export const CheckboxInput = styled.input`
   &:checked + label span:first-child {
-    background: #506eec;
-    border-color: #506eec;
+    background: var(--color-ring);
+    border-color: var(--color-ring);
     animation: wave-46 0.4s ease;
 
     @keyframes wave-46 {
@@ -116,7 +116,7 @@ export const CheckboxLabel = styled.label`
   cursor: pointer;
 
   &:hover span:first-child {
-    border-color: #506eec;
+    border-color: var(--color-ring);
   }
 `;
 
@@ -156,7 +156,7 @@ export const CheckIcon = styled.span`
     content: "";
     width: 100%;
     height: 100%;
-    background: #506eec;
+    background: var(--color-ring);
     display: block;
     transform: scale(0);
     opacity: 1;

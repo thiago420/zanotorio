@@ -23,6 +23,6 @@ export const Navlink = styled(NavLink)`
   color: #fff;
 
   &:hover {
-    background-color: rgba(136, 255, 0, 0.2);
+    background-color: var(--color-ring);
   };
 `;

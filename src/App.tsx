@@ -1,18 +1,19 @@
 import { BrowserRouter } from "react-router";
-import Routes from './routes';
-import GlobalStyles from "./styles/GlobalStyles";
-import '@hellouxpavel/cssanimation';
-import './styles/style.css';
+import Routes from "./routes";
+import "@hellouxpavel/cssanimation";
+import "./styles/global.css";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 function App() {
   return (
     <>
-      <GlobalStyles />
-      <BrowserRouter>
-        <Routes />
-      </BrowserRouter>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <BrowserRouter>
+          <Routes />
+        </BrowserRouter>
+      </ThemeProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

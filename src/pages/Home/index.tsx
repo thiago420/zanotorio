@@ -7,7 +7,7 @@ const Home = () => {
         <Title>Zanotório</Title>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default Home;

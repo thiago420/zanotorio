@@ -1,20 +1,35 @@
-import { useState } from "react";
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   bitsAtivos,
   calcularSomatorio,
   calcularNpc,
   calcularNpi,
 } from "../../util/utils";
-import Input from "../../components/Input";
 import Checkbox from "../../components/Checkbox";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const formulaSchema = z.object({
   np: z.coerce.number().min(1).max(7),
-  resposta: z.coerce.number("Você precisa inserir um número").min(1, "Você precisa colocar um número\nmaior ou igual que 1").max(99, "Você precisa colocar um número menor ou igual que 99"),
-  gabarito: z.coerce.number("Você precisa inserir um número").min(1, "Você precisa colocar um número maior ou igual que 1").max(99, "Você precisa colocar um número menor ou igual que 99"),
+  resposta: z.coerce
+    .number("Você precisa inserir um número")
+    .min(1, "Você precisa colocar um número\nmaior ou igual que 1")
+    .max(99, "Você precisa colocar um número menor ou igual que 99"),
+  gabarito: z.coerce
+    .number("Você precisa inserir um número")
+    .min(1, "Você precisa colocar um número maior ou igual que 1")
+    .max(99, "Você precisa colocar um número menor ou igual que 99"),
   pv: z.coerce.number().gt(0),
 });
 
@@ -24,17 +39,22 @@ const Calculadora = () => {
   const {
     register,
     handleSubmit,
+    watch,
+    control,
     formState: { errors },
   } = useForm({
-    mode: 'all',
+    mode: "all",
     resolver: zodResolver(formulaSchema),
+    defaultValues: {
+      np: ''
+    }
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [numeroProposicoes, setNumeroProposicoes] = useState(1);
+  const numeroProposicoes = Number(watch('np')) || 1;
 
   const retornarDados = ({ np, resposta, gabarito, pv }: FormulaSchema) => {
-    console.log(np, gabarito, resposta, pv)
+    console.log(np, gabarito, resposta, pv);
     const ntpc = bitsAtivos(gabarito).length;
     const npc = calcularNpc(bitsAtivos(gabarito), bitsAtivos(resposta));
     const npi = calcularNpi(bitsAtivos(gabarito), bitsAtivos(resposta));
@@ -45,47 +65,110 @@ const Calculadora = () => {
   return (
     <>
       <div className="flex h-screen w-screen items-center justify-center">
-        <form className="flex flex-col" onSubmit={handleSubmit(retornarDados)}>
-          <label htmlFor="np">Número de Proposições</label>
-          <select
-            id="np"
-            {...register('np')}
-          >
-            <option value={1}>1</option>
-            <option value={2}>2</option>
-            <option value={3}>3</option>
-            <option value={4}>4</option>
-            <option value={5}>5</option>
-            <option value={6}>6</option>
-            <option value={7}>7</option>
-          </select>
+        <form className="flex flex-col items-center justify-center" onSubmit={handleSubmit(retornarDados)}>
+          <ToggleGroup variant="outline" type="multiple">
+            <ToggleGroupItem value="bold" aria-label="Toggle bold">
+              A
+            </ToggleGroupItem>
+            <ToggleGroupItem value="italic" aria-label="Toggle italic">
+              B
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="strikethrough"
+              aria-label="Toggle strikethrough"
+            >
+              C
+            </ToggleGroupItem>
+          </ToggleGroup>
 
-          <Checkbox />
+          <label>Número de Proposições</label>
+          <Controller
+            {...register("np")}
+            control={control}
+            render={({ field }) => (
+              <Select value={String(field.value)} onValueChange={field.onChange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Selecione..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="1">1 proposição (1)</SelectItem>
+                    <SelectItem value="2">2 proposições (2)</SelectItem>
+                    <SelectItem value="3">3 proposições (4)</SelectItem>
+                    <SelectItem value="4">4 proposições (8)</SelectItem>
+                    <SelectItem value="5">5 proposições (16)</SelectItem>
+                    <SelectItem value="6">6 proposições (32)</SelectItem>
+                    <SelectItem value="7">7 proposições (64)</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            )}
+          />
 
           {/* <label htmlFor="resposta">Resposta</label> */}
-          <Input label="Resposta" style={{ width: 'min' }} type="number" id="resposta" error={errors.resposta?.message} {...register('resposta')} />
+          <Input
+            label="Resposta"
+            style={{
+              width: '64px',
+              height: '48px',
+              fontSize: '1.8rem',
+              textAlign: 'center',
+            }}
+            type="number"
+            id="resposta"
+            error={errors.resposta?.message}
+            {...register("resposta")}
+          />
+          {/* <Input
+            label="Resposta"
+            style={{ width: "min" }}
+            type="number"
+            id="resposta"
+            error={errors.resposta?.message}
+            {...register("resposta")}
+          /> */}
 
           {[...Array(numeroProposicoes)].map((_, i) => (
-            <div key={`resposta${i}`} className="flex gap-2">
-              <input type="checkbox" name={`resposta${i}`} id={`resposta${i}`} value={i} />
-              <label htmlFor={`resposta${i}`}>{1 << i}</label>
+            <div key={`resposta${i}`}>
+              <Checkbox id={`resposta${i}`} name={`resposta${i}`} label={String(1 << i)} value={i} />
             </div>
           ))}
 
           {/* <label htmlFor="gabarito">Gabarito</label> */}
-          <Input label="Gabarito" type="number" id="gabarito" {...register('gabarito')} />
+          <Input
+            label="Gabarito"
+            style={{
+              width: '64px',
+              height: '48px',
+              fontSize: '1.8rem',
+              textAlign: 'center',
+            }}
+            type="number"
+            id="gabarito"
+            {...register("gabarito")}
+          />
 
           {[...Array(numeroProposicoes)].map((_, i) => (
-            <div key={`gabarito${i}`} className="flex gap-2">
-              <input type="checkbox" name={`gabarito${i}`} id={`gabarito${i}`} value={i} />
-              <label htmlFor={`gabarito${i}`}>{1 << i}</label>
+            <div key={`gabarito${i}`}>
+              <Checkbox id={`gabarito${i}`} name={`gabarito${i}`} label={String(1 << i)} value={i} />
             </div>
           ))}
 
           {/* <label htmlFor="pv">Valor da Questão</label> */}
-          <Input label="Valor da Questão" type="number" id="pv" {...register('pv')} />
+          <Input
+            label="Valor da Questão"
+            style={{
+              width: '64px',
+              height: '48px',
+              fontSize: '1.8rem',
+              textAlign: 'center',
+            }}
+            type="number"
+            id="pv"
+            {...register("pv")}
+          />
 
-          <button type="submit">testar</button>
+          <Button type="submit">Calcular</Button>
         </form>
       </div>
     </>
