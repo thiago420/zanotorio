@@ -5,14 +5,16 @@ import Sobre from "../pages/Sobre";
 import Navbar from "../components/Navbar";
 import Provas from "@/pages/Provas";
 import DraggableBox from "@/pages/teste";
+import Configuracao from "@/pages/Configuracao";
 
 const routes = () => (
   <Routes>
     <Route element={<Navbar />}>
       <Route index element={<Home />} />
       <Route path="calculadora" element={<Calculadora />} />
-      <Route path="sobre" element={<Sobre />} />
       <Route path="provas" element={<Provas />} />
+      <Route path="configuracao" element={<Configuracao />} />
+      <Route path="sobre" element={<Sobre />} />
       <Route path="teste" element={<DraggableBox />} />
       <Route path="*" element={<span>404</span>} />
     </Route>
