@@ -4,19 +4,21 @@ import { cn } from "@/lib/utils";
 
 interface Props extends React.ComponentProps<"input"> {
   id: string;
-  label: string;
+  label?: string;
   error?: string;
 }
 
 function Input({ id, label, error, className, type, ...props }: Props) {
   return (
     <div className="flex flex-col">
-      <label
-        className="mb-2 inline-block text-start font-normal select-none"
-        htmlFor={id}
-      >
-        {label}
-      </label>
+      {label && (
+        <label
+          className="mb-2 inline-block text-start font-normal select-none"
+          htmlFor={id}
+        >
+          {label}
+        </label>
+      )}
       <input
         id={id}
         type={type}
@@ -33,7 +35,7 @@ function Input({ id, label, error, className, type, ...props }: Props) {
         <span
           className={cn(
             "cssanimation ca__fx-rattle",
-            "text-[0.8rem] text-red-600 mt-1",
+            "mt-1 text-[0.8rem] text-red-600",
           )}
         >
           {error}

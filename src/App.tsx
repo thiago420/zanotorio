@@ -3,14 +3,17 @@ import Routes from "./routes";
 import "@hellouxpavel/cssanimation";
 import "./styles/global.css";
 import { ThemeProvider } from "./components/ThemeProvider";
+import { TooltipProvider } from "./components/animate-ui/radix/tooltip";
 
 function App() {
   return (
     <>
       <ThemeProvider defaultTheme="system" storageKey="theme-mode">
-        <BrowserRouter>
-          <Routes />
-        </BrowserRouter>
+        <TooltipProvider>
+          <BrowserRouter>
+            <Routes />
+          </BrowserRouter>
+        </TooltipProvider>
       </ThemeProvider>
     </>
   );

@@ -8,19 +8,31 @@ import {
 
 interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
+  size?: number;
+  number?: number;
   label?: string;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ id, label, ...props }) => {
+const Checkbox: React.FC<CheckboxProps> = ({
+  id,
+  size = 18,
+  number,
+  label,
+  ...props
+}) => {
   return (
-    <Container>
+    <Container $size={size}>
       <div className="checkbox-wrapper">
         <input type="checkbox" id={id} {...props} />
         <label htmlFor={id}>
           <span>
-            <svg viewBox="0 0 12 10" height="10px" width="12px">
-              <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-            </svg>
+            {number ? (
+              <p style={{ fontSize: `${size * 0.5}px` }}>{number}</p>
+            ) : (
+              <svg viewBox="0 0 12 10" height={size * 0.55} width={size * 0.66}>
+                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+              </svg>
+            )}
           </span>
           {label && <span>{label}</span>}
         </label>

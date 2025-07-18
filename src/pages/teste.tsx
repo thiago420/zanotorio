@@ -1,124 +1,72 @@
-import React, { useRef, useEffect } from 'react';
-import Matter from 'matter-js';
+import React, { useEffect, useRef } from "react";
+import Matter, { Engine, Render, World, Bodies, Mouse } from "matter-js";
 
-const PhysicsDraggable: React.FC = () => {
-  const boxRef = useRef<HTMLDivElement>(null);
-  const engineRef = useRef<Matter.Engine | null>(null);
-  const boxBodyRef = useRef<Matter.Body | null>(null);
-  const renderRef = useRef<Matter.Render | null>(null);
-  const isDraggingRef = useRef(false);
+const DraggableBox: React.FC = () => {
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const engineRef = useRef<Engine | null>(null);
 
   useEffect(() => {
-    if (!boxRef.current) return;
-
-    // Configuração do motor de física Matter.js
-    const engine = Matter.Engine.create({
-      gravity: { x: 0, y: 0.5 }
-    });
+    const engine = Engine.create();
+    const world = engine.world;
     engineRef.current = engine;
 
-    const render = Matter.Render.create({
-      element: boxRef.current,
+    const render = Render.create({
+      element: sceneRef.current!,
       engine: engine,
       options: {
         width: 800,
         height: 600,
         wireframes: false,
-        background: '#f4f4f4'
-      }
+        background: "#fafafa",
+      },
     });
-    renderRef.current = render;
 
-    // Criar corpos físicos
-    const box = Matter.Bodies.rectangle(400, 200, 80, 80, {
-      restitution: 0.7,
-      friction: 0.01,
+    // Cria um retângulo (caixa)
+    const box = Bodies.rectangle(400, 200, 100, 100, {
+      restitution: 0.5,
       render: {
-        fillStyle: '#3498db',
-        strokeStyle: '#2980b9',
-        lineWidth: 2
-      }
+        fillStyle: "#3498db",
+      },
     });
-    boxBodyRef.current = box;
 
-    // Criar paredes
-    const ground = Matter.Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
-    const leftWall = Matter.Bodies.rectangle(0, 300, 60, 600, { isStatic: true });
-    const rightWall = Matter.Bodies.rectangle(800, 300, 60, 600, { isStatic: true });
+    // Piso
+    const ground = Bodies.rectangle(400, 580, 810, 60, {
+      isStatic: true,
+      render: {
+        fillStyle: "#95a5a6",
+      },
+    });
 
-    Matter.Composite.add(engine.world, [box, ground, leftWall, rightWall]);
-    Matter.Render.run(render);
+    World.add(world, [box, ground]);
 
-    const runner = Matter.Runner.create();
-    Matter.Runner.run(runner, engine);
+    // Adiciona o controle do mouse
+    const mouse = Mouse.create(render.canvas);
+    const mouseConstraint = Matter.MouseConstraint.create(engine, {
+      mouse,
+      constraint: {
+        stiffness: 0.2,
+        render: { visible: false },
+      },
+    });
 
-    // Função para converter coordenadas do mouse para coordenadas do mundo físico
-    const getRelativeMousePosition = (canvas: HTMLCanvasElement, clientX: number, clientY: number) => {
-      const rect = canvas.getBoundingClientRect();
-      return {
-        x: (clientX - rect.left) * (canvas.width / rect.width),
-        y: (clientY - rect.top) * (canvas.height / rect.height)
-      };
-    };
+    World.add(world, mouseConstraint);
 
-    // Eventos de arrastar
-    const canvas = render.canvas;
+    render.mouse = mouse;
 
-    const onMouseDown = (e: MouseEvent) => {
-      if (!boxBodyRef.current) return;
+    // Executa o motor e renderização
+    Engine.run(engine);
+    Render.run(render);
 
-      const mousePos = getRelativeMousePosition(canvas, e.clientX, e.clientY);
-      const bodies = Matter.Query.point([boxBodyRef.current], mousePos);
-
-      if (bodies.length > 0) {
-        isDraggingRef.current = true;
-        Matter.Body.setStatic(boxBodyRef.current, true);
-      }
-    };
-
-    const onMouseMove = (e: MouseEvent) => {
-      if (!isDraggingRef.current || !boxBodyRef.current) return;
-
-      const mousePos = getRelativeMousePosition(canvas, e.clientX, e.clientY);
-      Matter.Body.setPosition(boxBodyRef.current, mousePos);
-    };
-
-    const onMouseUp = () => {
-      if (!isDraggingRef.current || !boxBodyRef.current) return;
-
-      isDraggingRef.current = false;
-      Matter.Body.setStatic(boxBodyRef.current, false);
-    };
-
-    canvas.addEventListener('mousedown', onMouseDown);
-    canvas.addEventListener('mousemove', onMouseMove);
-    canvas.addEventListener('mouseup', onMouseUp);
-
+    // Cleanup
     return () => {
-      canvas.removeEventListener('mousedown', onMouseDown);
-      canvas.removeEventListener('mousemove', onMouseMove);
-      canvas.removeEventListener('mouseup', onMouseUp);
-
-      Matter.Render.stop(render);
-      Matter.Runner.stop(runner);
-      Matter.Engine.clear(engine);
+      Render.stop(render);
+      Engine.clear(engine);
       render.canvas.remove();
+      render.textures = {};
     };
   }, []);
 
-  return (
-    <div
-      ref={boxRef}
-      style={{
-        width: '800px',
-        height: '600px',
-        position: 'relative',
-        border: '1px solid #ccc',
-        borderRadius: '8px',
-        overflow: 'hidden'
-      }}
-    />
-  );
+  return <div ref={sceneRef} />;
 };
 
-export default PhysicsDraggable;
+export default DraggableBox;

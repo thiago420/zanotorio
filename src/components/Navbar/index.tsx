@@ -5,7 +5,6 @@ const tabs = [
   { id: "/", label: "Início" },
   { id: "/calculadora", label: "Calculadora" },
   { id: "/provas", label: "Provas" },
-  { id: "/configuracao", label: "Configuração" },
   { id: "/sobre", label: "Sobre" },
 ];
 
@@ -14,7 +13,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="fixed top-4 left-1/2 flex -translate-x-1/2 space-x-1">
+      <div className="fixed top-4 left-1/2 flex flex-wrap justify-center -translate-x-1/2 space-x-1">
         {tabs.map((tab) => (
           <NavLink
             to={tab.id}

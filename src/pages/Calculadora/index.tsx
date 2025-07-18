@@ -196,8 +196,9 @@ const Calculadora = () => {
                     <div key={`resposta${i}`}>
                       <Checkbox
                         id={`resposta${i}`}
+                        size={32}
+                        number={1 << i}
                         name={`resposta${i}`}
-                        label={String(1 << i)}
                         value={i}
                       />
                     </div>
@@ -231,8 +232,9 @@ const Calculadora = () => {
                     <div key={`gabarito${i}`}>
                       <Checkbox
                         id={`gabarito${i}`}
+                        size={32}
+                        number={1 << i}
                         name={`gabarito${i}`}
-                        label={String(1 << i)}
                         value={i}
                       />
                     </div>
