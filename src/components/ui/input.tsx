@@ -12,7 +12,7 @@ function Input({ id, label, error, className, type, ...props }: Props) {
   return (
     <div className="flex flex-col">
       <label
-        className="mb-px inline-block cursor-text text-start text-sm font-normal text-[--clr] select-none"
+        className="mb-2 inline-block text-start font-normal select-none"
         htmlFor={id}
       >
         {label}
