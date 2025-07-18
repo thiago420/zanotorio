@@ -33,7 +33,7 @@ function Input({ id, label, error, className, type, ...props }: Props) {
         <span
           className={cn(
             "cssanimation ca__fx-rattle",
-            "text-[0.8rem] text-red-600",
+            "text-[0.8rem] text-red-600 mt-1",
           )}
         >
           {error}
