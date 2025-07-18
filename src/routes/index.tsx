@@ -5,10 +5,16 @@ import Sobre from "../pages/Sobre";
 import Navbar from "../components/Navbar";
 import Provas from "@/pages/Provas";
 import DraggableBox from "@/pages/teste";
+import { ModeToggle } from "@/components/ModeToggle";
 
 const routes = () => (
   <Routes>
-    <Route element={<Navbar />}>
+    <Route element={(
+      <>
+        <ModeToggle />
+        <Navbar />
+      </>
+    )}>
       <Route index element={<Home />} />
       <Route path="calculadora" element={<Calculadora />} />
       <Route path="sobre" element={<Sobre />} />
