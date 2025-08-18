@@ -32,8 +32,9 @@ import {
   // DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import confetti from "canvas-confetti";
+import { RippleButton } from "@/components/animate-ui/buttons/ripple";
 
 const formulaSchema = z.object({
   np: z.coerce.number().min(1).max(7),
@@ -58,13 +59,12 @@ const Calculadora = () => {
     handleSubmit,
     watch,
     control,
+    setValue,
     formState: { errors },
   } = useForm({
     mode: "all",
     resolver: zodResolver(formulaSchema),
-    defaultValues: {
-      np: "",
-    },
+    defaultValues: {},
   });
 
   const [clicar, setClicar] = useState<string[]>([]);
@@ -73,6 +73,18 @@ const Calculadora = () => {
   const [resultado, setResultado] = useState(0);
 
   const numeroProposicoes = Number(watch("np")) || 1;
+
+  const { resposta, gabarito } = watch();
+
+  const toggleValue = (valor: string, campo: 'resposta' | 'gabarito') => {
+    const valorCampoNumber = Number(watch(campo));
+    const valorNumber = Number(valor);
+    if (bitsAtivos(valorCampoNumber).includes(valorNumber)) {
+      setValue(campo, String(valorCampoNumber - valorNumber));
+    } else {
+      setValue(campo, String(valorCampoNumber + valorNumber));
+    }
+  }
 
   const calcular = ({ np, resposta, gabarito, pv }: FormulaSchema) => {
     const ntpc = bitsAtivos(gabarito).length;
@@ -138,6 +150,10 @@ const Calculadora = () => {
     });
   };
 
+  useEffect(() => {
+
+  }, [clicar]);
+
   return (
     <>
       <div className="flex h-screen w-screen items-center justify-center">
@@ -199,7 +215,9 @@ const Calculadora = () => {
                         size={32}
                         number={1 << i}
                         name={`resposta${i}`}
-                        value={i}
+                        value={1 << i}
+                        defaultChecked={bitsAtivos(Number(resposta)).includes(1 << i)}
+                        onClick={(e) => toggleValue(e.currentTarget.value, 'resposta')}
                       />
                     </div>
                   ))}
@@ -222,8 +240,6 @@ const Calculadora = () => {
               />
             )}
 
-            {/* <label htmlFor="gabarito">Gabarito</label> */}
-
             {clicar.includes("clicar-gabarito") ? (
               <>
                 <label>Gabarito</label>
@@ -235,7 +251,9 @@ const Calculadora = () => {
                         size={32}
                         number={1 << i}
                         name={`gabarito${i}`}
-                        value={i}
+                        value={1 << i}
+                        defaultChecked={bitsAtivos(Number(gabarito)).includes(1 << i)}
+                        onClick={(e) => toggleValue(e.currentTarget.value, 'gabarito')}
                       />
                     </div>
                   ))}
@@ -285,8 +303,7 @@ const Calculadora = () => {
               {...register("pv")}
             />
 
-            <Button type="submit">Calcular</Button>
-
+            <RippleButton type="submit" disabled>Calcular</RippleButton>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Resultado</DialogTitle>

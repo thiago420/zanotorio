@@ -67,10 +67,11 @@ export const Container = styled.div<{ $size: number; }>`
     transform: scale(0);
     opacity: 1;
     border-radius: 50%;
+    pointer-events: none;
   }
-  .checkbox-wrapper label span:last-child {
+  /* .checkbox-wrapper label span span {
     padding-left: 8px;
-  }
+  } */
   .checkbox-wrapper label:hover span:first-child {
     border-color: var(--color-ring);
   }
