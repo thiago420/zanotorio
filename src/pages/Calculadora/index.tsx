@@ -60,12 +60,15 @@ const Calculadora = () => {
     watch,
     control,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     mode: "all",
     resolver: zodResolver(formulaSchema),
     defaultValues: {},
   });
+
+  const isFormValid = Object.keys(errors).length === 0;
 
   const [clicar, setClicar] = useState<string[]>([]);
 
@@ -75,6 +78,8 @@ const Calculadora = () => {
   const numeroProposicoes = Number(watch("np")) || 1;
 
   const { resposta, gabarito } = watch();
+
+  console.log(watch());
 
   const toggleValue = (valor: string, campo: 'resposta' | 'gabarito') => {
     const valorCampoNumber = Number(watch(campo));
@@ -303,7 +308,14 @@ const Calculadora = () => {
               {...register("pv")}
             />
 
-            <RippleButton type="submit" disabled>Calcular</RippleButton>
+            <RippleButton size="lg" type="submit" disabled={!isFormValid}>Calcular</RippleButton>
+            {Object.values(watch()).filter(Boolean).length > 0 && (
+              <div className="flex items-center justify-center">
+                <button type="button" className="cursor-pointer hover:underline" onClick={() => reset()}>
+                  Limpar
+                </button>
+              </div>
+            )}
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Resultado</DialogTitle>

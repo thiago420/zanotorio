@@ -13,11 +13,20 @@ import {
 } from "@/components/animate-ui/radix/tooltip";
 import { Settings } from "../animate-ui/icons/settings";
 import { AnimateIcon } from "../animate-ui/icons/icon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import configJSON from '@/configuration/config.json';
 
 const ConfiguracaoMenu = () => {
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState(false);
+
+  useEffect(() => {
+    const storageConfig = localStorage.getItem('configuration');
+    // typeof JSON.parse(storageConfig) !== 'object'
+    if (!storageConfig) {
+      localStorage.setItem('configuration', JSON.stringify(configJSON.defaultConfiguration));
+    }
+  });
 
   return (
     <div className="fixed top-4 right-4">
